@@ -50,10 +50,24 @@ void ResponsiveAnalogRead::update() {
 }
 
 void ResponsiveAnalogRead::update(int rawValue) {
-	this->rawValue = rawValue;
-	prevResponsiveValue = responsiveValue;
-	responsiveValue = getResponsiveValueUni(rawValue);
-	responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
+	bool update = true;
+	if (average_amount > 0) {
+		average_sum+=rawValue;
+		average_counter++;
+		if(average_counter<average_amount){
+			update=false;
+		}else{
+			rawValue=average_sum/average_amount;
+			average_counter=0;
+			average_sum=0;
+		}
+	}
+	if (update) {
+		this->rawValue = rawValue;
+		prevResponsiveValue = responsiveValue;
+		responsiveValue = getResponsiveValueUni(rawValue);
+		responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
+	}
 }
 
 int ResponsiveAnalogRead::getResponsiveValue(int newValue) {

@@ -62,6 +62,8 @@ class ResponsiveAnalogRead
     inline void setAnalogResolution(unsigned int resolution) { analogResolution = resolution; }
     // if your ADC is something other than 10bit (1024), set that here
 
+    inline void setAverageAmount(byte amount){average_amount=amount;}
+
   private:
     int pin;
     unsigned int analogResolution = 1024;
@@ -81,9 +83,14 @@ class ResponsiveAnalogRead
     int prevResponsiveValue;
     bool responsiveValueHasChanged;
 
+    byte average_amount=0;
+    byte average_counter=0;
+    long average_sum=0;
+
     int getResponsiveValue(int newValue);
     int getResponsiveValueUni(int newValue);
     float snapCurve(float x);
+
 };
 
 #endif
