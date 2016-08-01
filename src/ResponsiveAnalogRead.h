@@ -41,11 +41,13 @@ class ResponsiveAnalogRead
     
     ResponsiveAnalogRead(int pin, bool sleepEnable, float snapMultiplier = 0.01);
 
+    ResponsiveAnalogRead(bool sleepEnable, float snapMultiplier = 0.01);
+
     inline int getValue() { return responsiveValue; } // get the responsive value from last update
     inline int getRawValue() { return rawValue; } // get the raw analogRead() value from last update
     inline bool hasChanged() { return responsiveValueHasChanged; } // returns true if the responsive value has changed during the last update
     void update(); // updates the value by performing an analogRead() and calculating a responsive value based off it
-
+    void update(int rawValue);// updates the value by rawValue and calculating a responsive value based off it
     void setSnapMultiplier(float newMultiplier);
     inline void enableSleep() { sleepEnable = true; }
     inline void disableSleep() { sleepEnable = false; }

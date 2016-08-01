@@ -36,9 +36,23 @@ ResponsiveAnalogRead::ResponsiveAnalogRead(int pin, bool sleepEnable, float snap
   setSnapMultiplier(snapMultiplier);
 }
 
+ResponsiveAnalogRead::ResponsiveAnalogRead(bool sleepEnable, float snapMultiplier)
+{
+  this->sleepEnable = sleepEnable;
+  setSnapMultiplier(snapMultiplier);
+}
+
 void ResponsiveAnalogRead::update()
 {
   rawValue = analogRead(pin);
+  prevResponsiveValue = responsiveValue;
+  responsiveValue = getResponsiveValue(rawValue);
+  responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
+}
+
+void ResponsiveAnalogRead::update(int rawValue)
+{
+  this->rawValue = rawValue;
   prevResponsiveValue = responsiveValue;
   responsiveValue = getResponsiveValue(rawValue);
   responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
