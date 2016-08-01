@@ -82,6 +82,7 @@ class ResponsiveAnalogRead
     bool responsiveValueHasChanged;
 
     int getResponsiveValue(int newValue);
+    int getResponsiveValueUni(int newValue);
     float snapCurve(float x);
 };
 
