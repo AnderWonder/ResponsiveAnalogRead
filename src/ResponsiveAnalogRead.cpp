@@ -43,23 +43,39 @@ ResponsiveAnalogRead::ResponsiveAnalogRead(bool sleepEnable,
 }
 
 void ResponsiveAnalogRead::update() {
-	rawValue = analogRead(pin);
-	prevResponsiveValue = responsiveValue;
-	responsiveValue = getResponsiveValue(rawValue);
-	responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
+	bool update = true;
+	rawValue=analogRead(pin);
+	if (average_amount > 0) {
+		average_sum += rawValue;
+		average_counter++;
+		if (average_counter < average_amount) {
+			update = false;
+		}
+		else {
+			rawValue = average_sum / average_amount;
+			average_counter = 0;
+			average_sum = 0;
+		}
+	}
+	if (update) {
+		prevResponsiveValue = responsiveValue;
+		responsiveValue = getResponsiveValue(rawValue);
+		responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
+	}
 }
 
 void ResponsiveAnalogRead::update(int rawValue) {
 	bool update = true;
 	if (average_amount > 0) {
-		average_sum+=rawValue;
+		average_sum += rawValue;
 		average_counter++;
-		if(average_counter<average_amount){
-			update=false;
-		}else{
-			rawValue=average_sum/average_amount;
-			average_counter=0;
-			average_sum=0;
+		if (average_counter < average_amount) {
+			update = false;
+		}
+		else {
+			rawValue = average_sum / average_amount;
+			average_counter = 0;
+			average_sum = 0;
 		}
 	}
 	if (update) {
