@@ -43,21 +43,25 @@ ResponsiveAnalogRead::ResponsiveAnalogRead(bool sleepEnable,
 }
 
 void ResponsiveAnalogRead::update() {
-	bool update = true;
+	bool average_ready;
 	rawValue=analogRead(pin);
 	if (average_amount > 0) {
 		average_sum += rawValue;
 		average_counter++;
 		if (average_counter < average_amount) {
-			update = false;
+			average_ready = false;
+			responsiveValueHasChanged = false;
 		}
 		else {
 			rawValue = average_sum / average_amount;
 			average_counter = 0;
 			average_sum = 0;
+			average_ready = true;
 		}
 	}
-	if (update) {
+	else
+		average_ready = true;
+	if (average_ready) {
 		prevResponsiveValue = responsiveValue;
 		responsiveValue = getResponsiveValue(rawValue);
 		responsiveValueHasChanged = responsiveValue != prevResponsiveValue;
@@ -65,20 +69,26 @@ void ResponsiveAnalogRead::update() {
 }
 
 void ResponsiveAnalogRead::update(int rawValue) {
-	bool update = true;
+	bool average_ready;
+
 	if (average_amount > 0) {
 		average_sum += rawValue;
 		average_counter++;
 		if (average_counter < average_amount) {
-			update = false;
+			average_ready = false;
+			responsiveValueHasChanged = false;
 		}
 		else {
 			rawValue = average_sum / average_amount;
 			average_counter = 0;
 			average_sum = 0;
+			average_ready = true;
 		}
 	}
-	if (update) {
+	else
+		average_ready = true;
+
+	if (average_ready) {
 		this->rawValue = rawValue;
 		prevResponsiveValue = responsiveValue;
 		responsiveValue = getResponsiveValueUni(rawValue);
@@ -166,7 +176,6 @@ int ResponsiveAnalogRead::getResponsiveValue(int newValue) {
 int ResponsiveAnalogRead::getResponsiveValueUni(int newValue) {
 	// get current milliseconds
 	unsigned long ms = millis();
-
 	// if sleep and edge snap are enabled and the new value is very close to an edge, drag it a little closer to the edges
 	// This'll make it easier to pull the output values right to the extremes without sleeping,
 	// and it'll make movements right near the edge appear larger, making it easier to wake up

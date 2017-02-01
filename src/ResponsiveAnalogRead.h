@@ -74,7 +74,7 @@ class ResponsiveAnalogRead
     unsigned int awakeActivityThreshold = 5;
     bool edgeSnapEnable = true;
 
-    float smoothValue;
+    double smoothValue=0;
     unsigned long lastActivityMS;
     bool sleeping = false;
 
